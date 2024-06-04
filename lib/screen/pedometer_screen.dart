@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 
 import 'package:pedometer/pedometer.dart';
@@ -16,12 +17,14 @@ class PedometerPage extends StatefulWidget {
 
 class _PedometerPageState extends State<PedometerPage> {
   FirebaseDatabase _realtime = FirebaseDatabase.instance;
+  DateTime now = DateTime.now();
   late Stream<StepCount> _stepCountStream;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
   String _status = '?', _steps = '?';
   int _seconds = 0;
   bool _isRunning = false;
   late Timer _timer;
+  int goal = 0;
 
   void _startTimer() {
     _isRunning = true;
@@ -41,6 +44,17 @@ class _PedometerPageState extends State<PedometerPage> {
   void initState() {
     super.initState();
     initPlatformState();
+    getGoal();
+  }
+
+  Future<void> getGoal() async {
+    String date = DateFormat("yyyyMMdd").format(now);
+    DataSnapshot ref = await _realtime.ref("steps/${date}/memberGoal/goal").get();
+    int data = ref.value as int;
+    print(data);
+    setState(() {
+      goal = data;
+    });
   }
 
   void onStepCount (StepCount event) async{
@@ -48,9 +62,9 @@ class _PedometerPageState extends State<PedometerPage> {
       _steps = event.steps.toString();
     });
     DateTime now = DateTime.now();
-    String date = '${now.year}${now.month}${now.day}';
-    String timeString = '${(now.hour)}${(now.minute)}${(now.second)}';
-    await _realtime.ref().child("steps").child(date).child(timeString).set({
+    String formattedDate = DateFormat('yyyyMMdd').format(now);
+    String timeString = DateFormat('HHmmss').format(now);
+    await _realtime.ref().child("steps").child(formattedDate).child(timeString).set({
       "step": _steps,
       "time": timeString,
     });
@@ -113,6 +127,15 @@ class _PedometerPageState extends State<PedometerPage> {
     }
   }
 
+  double percent(){
+    var percent = double.parse(_steps)/goal;
+    if(percent > 1){
+      return 1.0;
+    }else{
+      return percent;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double steps = double.tryParse(_steps) ?? 0;
@@ -131,7 +154,7 @@ class _PedometerPageState extends State<PedometerPage> {
                 radius: 120.0,
                 lineWidth: 13.0,
                 animation: true,
-                percent: 0.06,
+                percent: percent(),
                 center: Text(
                   _steps,
                   style: const TextStyle(
@@ -140,6 +163,7 @@ class _PedometerPageState extends State<PedometerPage> {
                 progressColor: Colors.yellow,
                 circularStrokeCap: CircularStrokeCap.round,
               ),
+              Text('목표: ${goal}'),
               const Divider(
                 height: 100,
                 thickness: 0,
