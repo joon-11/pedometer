@@ -33,9 +33,24 @@ Frontend : Flutter
 <br />
 Backend : express.js
 <br />
-DataBase : Mysql
+DataBase : FireBase
 
 ## 🤩 Preview
+메인 화면
+
+<img width="208" alt="스크린샷 2024-11-20 오전 11 58 06" src="https://github.com/user-attachments/assets/a6cdcc27-f815-4195-9cd2-ad5f53683cf2">
+
+날짜별 걸음수 시각화 화면
+
+<img width="194" alt="스크린샷 2024-11-20 오전 11 58 23" src="https://github.com/user-attachments/assets/897baf22-0c61-48a0-b82a-ec80bd7e1bb7">
+
+내 정보 화면
+
+<img width="189" alt="스크린샷 2024-11-20 오전 11 58 36" src="https://github.com/user-attachments/assets/f3828b36-929d-4e0f-b408-f371705c4717">
+
+DB
+
+<img width="573" alt="스크린샷 2024-11-20 오전 11 58 50" src="https://github.com/user-attachments/assets/7b4f52b4-7dc5-4c2d-a1f7-a09228115074">
 
 
 
